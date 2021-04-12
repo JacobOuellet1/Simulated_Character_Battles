@@ -1,1 +1,14 @@
+Code File Index
+Jacob Ouellet & Jack O'Neill
+
+----------------------------
+1. main.py | author: Jack O'Neill
+This file contains the core class that will be used for our AI agent.
+----------------------------
+2. superherodb_web_scraper.py | author: Jacob Ouellet
+This file contains the code used to scrape data from superherodb.com and creates an excel sheet with the data collected from the website
+----------------------------
+3. Character_Database.xlsx | author: Jacob Ouellet
+This file is the database excel sheet created by superherodb_web_scraper.py
+
 
