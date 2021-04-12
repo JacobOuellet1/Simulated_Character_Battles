@@ -28,7 +28,8 @@ class Player():
 		print("Player Type:\t" + ("Maximizer" if self.player_type else "Minimizer"))
 		print("Blocking:\t" + ("True" if self.blocking else "False"))
 		print("Health:\t\t" + str(self.health) + "\n")
-	def strike(self, target):
+	def strike(self, target, blocking):
+		self.blocking = blocking
 		damage = (self.strength * 0.33 + self.combat * 0.33 + self.power * 0.33) * (3 if self.blocking else 5)
 		if target.blocking:
 			ratio = (0.8 * (self.speed * 0.66 + self.combat * 0.16 + self.intelligence * 0.16)) / (self.durability * 0.33 + self.speed * 0.33 + self.intelligence * 0.16 + self.strength * 0.16)
@@ -37,21 +38,18 @@ class Player():
 		
 # Mock battle
 
-player_one = Player("Frog Man", "Joe Schmoe", "Male", "Froganoid", 175, 70, 25, 75, 60, 60, 60, 20, 0)
-player_two = Player("The Doktor", "Darryl Ichtenstein", "Male", "Human", 175, 80, 90, 20, 70, 30, 70, 50, 1)
+player_one = Player("Frog Man", "Joe Schmoe", "Male", "Froganoid", 175, 90.0, 25, 75, 60, 60, 60, 20, 0)
+player_two = Player("The Doktor", "Darryl Ichtenstein", "Male", "Human", 175, 50.0, 90, 20, 70, 30, 70, 50, 1)
 player_one.print_stats()
 player_two.print_stats()
 
-# Move the decision to block to strike function
-#player_one.blocking = 1
-player_two.blocking = 1
-
-player_one.strike(player_two)
-print(str(player_two.super_name) + " is struck by " + str(player_one.super_name) + "!\n")
-player_two.print_stats()
-player_two.strike(player_one)
+player_two.strike(player_one, 1) # 1 means block
 print(str(player_one.super_name) + " is struck by " + str(player_two.super_name) + "!\n")
 player_one.print_stats()
+player_one.strike(player_two, 0) # 0 means no block
+print(str(player_two.super_name) + " is struck by " + str(player_one.super_name) + "!\n")
+player_two.print_stats()
+
 
 """
 Win condition:
