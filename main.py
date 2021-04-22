@@ -49,7 +49,7 @@ class Game():
 		self.p1.print_stats()
 		self.p2.print_stats()
 	def simulate(self, depth):
-		print("Depth remaining:\t" + str(depth) + "\t Healths left:\t"  + str(self.p1.health) + " " + str(self.p2.health))
+		print("Depth remaining:\t" + str(depth) + "\t Healths left:\t"  + str(self.p1.health) + " " + str(self.p2.health) + "\tType:\t" + str(self.p1.blocking) + " " + str(self.p2.blocking))
 		if (self.p1.health <= 0):
 			print("Btw, looks like p2 won!")
 			return
@@ -62,13 +62,11 @@ class Game():
 			self.offense.turn = 0 if self.turn else 1
 			self.defense.turn = 0 if self.turn else 1
 			if (self.turn == 0):
-				self.offense.p1.strike(self.offense.p2, 0)
-			else:
-				self.offense.p2.strike(self.offense.p1, 0)
-			if (self.turn == 1):
-				self.defense.p1.strike(self.defense.p2, 1)
+				self.defense.p1.strike(self.offense.p2, 1)
+				self.offense.p1.strike(self.defense.p2, 0)
 			else:
 				self.defense.p2.strike(self.defense.p1, 1)
+				self.offense.p2.strike(self.offense.p1, 0)
 			self.offense.simulate(depth - 1)
 			self.defense.simulate(depth - 1)
 		
@@ -89,7 +87,7 @@ player_two = Player("The Doktor", "Darryl Ichtenstein", "Male", "Human", 175, 50
 
 the_game = Game(player_one, player_two)
 
-the_game.simulate(3)
+the_game.simulate(2)
 
 """
 Win condition:
