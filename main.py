@@ -66,6 +66,8 @@ def main():
 
 		player_one = Player(*char_1_data)
 		player_two = Player(*char_2_data)
+		
+		player_one.player_type = 0
 
 		initial_game = Game(player_one, player_two)
 
@@ -77,6 +79,7 @@ def main():
 		the_game = ExpectimaxHeuristic(initial_game)
 
 		the_game.emulate()
+		root.destroy()
 
 	Btn = ttk.Button(mainframe, text="Fight!", command=clickRunFight)
 
@@ -217,7 +220,7 @@ class ExpectimaxHeuristic():
 			print(str(self.p2.super_name) + " strikes " + str(self.p1.super_name) + attack_type)
 		else:
 			print(str(self.p1.super_name) + " strikes " + str(self.p2.super_name) + attack_type)
-		print("Health: " + str(new_game.p1.health) + " " + str(new_game.p2.health) + "\n")
+		print("P1 Health: " + str(new_game.p1.health) + " | P2 Health: " + str(new_game.p2.health) + "\n")
 		if (not new_game.p2.health):
 			print("Player 1 asserts dominance.")
 			return
