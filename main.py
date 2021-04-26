@@ -1,5 +1,96 @@
 # main.py
 from copy import deepcopy
+from tkinter import *
+from tkinter import ttk
+import openpyxl
+
+def main():
+	# Mock battle
+	root = Tk()
+	root.title("AI Fight Simulator")
+
+	# Add a grid
+	mainframe = Frame(root)
+	mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
+	mainframe.columnconfigure(0, weight=1)
+	mainframe.rowconfigure(0, weight=1)
+	mainframe.pack(pady=100, padx=100)
+
+	# Dictionary with options
+	character_list = []
+	workbook = openpyxl.load_workbook("web_scraper/Character_Database_Standardized.xlsx")
+	worksheet = workbook.active
+	i = 0
+	for row in worksheet.iter_rows():
+		if i >= 1:  # skip header of excel sheet
+			cell = row[0].value  # get the character name
+			cell2 = row[2].value	# get their planet/universe e.g movie version vs character version vs different versions of the same hero
+			if cell2 == '-':
+				cell2 = 'N/A'
+			character_list.append(cell + " | Universe: " + cell2)
+		i += 1
+	workbook.close()
+
+	popupMenu = ttk.Combobox(mainframe, values=character_list, width=50)
+	popupMenu2 = ttk.Combobox(mainframe, values=character_list, width=50)
+	Label(mainframe, text="Choose fighter 1").grid(row=1, column=1)
+	Label(mainframe, text="Choose fighter 2").grid(row=1, column=3)
+	popupMenu.grid(row=2, column=1)
+	popupMenu2.grid(row=2, column=3)
+
+	# create button, link it
+	def clickRunFight():
+		print(popupMenu.get())
+		print(popupMenu2.get())
+
+		idx_char_1 = character_list.index(popupMenu.get()) + 2  # add one because of the header row
+		idx_char_2 = character_list.index(popupMenu2.get()) + 2  # add one because of the header row and add another one because cell function starts index at 1
+
+		wb = openpyxl.load_workbook("web_scraper/Character_Database_Standardized.xlsx")
+		ws = wb.active
+
+		char_1_data = []
+		char_2_data = []
+		for i in range(1, 15):
+			if i != 3:  # skip the planet of the character found at index 2
+				if i > 5:  # numbers so convert to float
+					char_1_data.append(float(ws.cell(idx_char_1, i).value))
+				else:
+					char_1_data.append(ws.cell(idx_char_1, i).value)
+		for i in range(1, 15):
+			if i != 3:  # skip the planet of the character found at index 2
+				if i > 5:  # numbers so convert to float
+					char_2_data.append(float(ws.cell(idx_char_2, i).value))
+				else:
+					char_2_data.append(ws.cell(idx_char_2, i).value)
+
+		player_one = Player(*char_1_data)
+		player_two = Player(*char_2_data)
+
+		initial_game = Game(player_one, player_two)
+
+		initial_game.p1.print_stats()
+		initial_game.p2.print_stats()
+
+		print("A chance encounter occurs, and the following battle takes place:\n")
+
+		the_game = ExpectimaxHeuristic(initial_game)
+
+		the_game.emulate()
+
+	Btn = ttk.Button(mainframe, text="Fight!", command=clickRunFight)
+
+	# place button
+	Btn.grid(row=3, column=3)
+
+	root.mainloop()
+
+	"""
+	Win condition:
+		Health points of enemy depleted
+	Draw condition:
+		Neither opponent is defeated by turn X (decided arbitrarily by the computer's abilities)
+	"""
 
 class Player():
 	def __init__(self, super_name, real_name, gender, species, height, weight, inte, stre, spee, dura, powe, comb, p_type):
@@ -136,29 +227,5 @@ class ExpectimaxHeuristic():
 		new_expheur = ExpectimaxHeuristic(new_game)
 		new_expheur.emulate()
 		return
-		
 
-# Mock battle
-
-print("Which fictional character will win? Our fighters are:\n")
-
-player_one = Player("Frog Man", "Joe Schmoe", "Male", "Froganoid", 175, 90.0, 25, 75, 60, 60, 60, 20, 0)
-player_two = Player("The Doktor", "Darryl Ichtenstein", "Male", "Human", 175, 50.0, 90, 20, 70, 30, 70, 50, 1)
-
-initial_game = Game(player_one, player_two)
-
-initial_game.p1.print_stats()
-initial_game.p2.print_stats()
-
-print("A chance encounter occurs, and the following battle takes place:\n")
-
-the_game = ExpectimaxHeuristic(initial_game)
-
-the_game.emulate()
-
-"""
-Win condition:
-	Health points of enemy depleted
-Draw condition:
-	Neither opponent is defeated by turn X (decided arbitrarily by the computer's abilities)
-"""
+main()
