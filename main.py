@@ -139,9 +139,9 @@ class Player():
 		print("Health:\t\t" + str(self.health) + "\n")
 	def strike(self, target, blocking):
 		self.blocking = blocking
-		damage = (self.strength * 0.33 + self.combat * 0.33 + self.power * 0.33) * (3 if self.blocking else 5)
+		damage = (self.strength * 0.33 + self.combat * 0.33 + self.power * 0.33) * (3 if self.blocking else 5) * 0.75
 		if target.blocking:
-			ratio = (0.8 * (self.speed * 0.66 + self.combat * 0.16 + self.intelligence * 0.16)) / (self.durability * 0.33 + self.speed * 0.33 + self.intelligence * 0.16 + self.strength * 0.16)
+			ratio = (0.8 * (self.speed * 0.66 + self.combat * 0.16 + self.intelligence * 0.16)) / (target.durability * 0.33 + target.speed * 0.33 + target.intelligence * 0.16 + target.strength * 0.16)
 			damage *= ratio
 		target.health = max(0, round(target.health - damage, 1)) # health will not drop below zero
 		
