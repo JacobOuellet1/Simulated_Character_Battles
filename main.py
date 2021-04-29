@@ -24,7 +24,7 @@ def main():
 	for row in worksheet.iter_rows():
 		if i >= 1:  # skip header of excel sheet
 			cell = row[0].value  # get the character name
-			cell2 = row[2].value	# get their planet/universe e.g movie version vs character version vs different versions of the same hero
+			cell2 = row[2].value  # get their planet/universe e.g movie version vs character version vs different versions of the same hero
 			if cell2 == '-':
 				cell2 = 'N/A'
 			character_list.append(cell + " | Universe: " + cell2)
@@ -54,15 +54,29 @@ def main():
 		for i in range(1, 15):
 			if i != 3:  # skip the planet of the character found at index 2
 				if i > 5:  # numbers so convert to float
-					char_1_data.append(float(ws.cell(idx_char_1, i).value))
+					current_character_1_data = ws.cell(idx_char_1, i).value
+					current_character_2_data = ws.cell(idx_char_2, i).value
+
+					if current_character_1_data == '-' and current_character_2_data != '-':
+						current_character_1_data = current_character_2_data
+					elif current_character_2_data == '-' and current_character_1_data != '-':
+						current_character_2_data = current_character_1_data
+					elif current_character_2_data == '-' and current_character_1_data == '-':
+						current_character_1_data = current_character_2_data = '50'
+					char_1_data.append(float(current_character_1_data))
+					char_2_data.append(float(current_character_2_data))
 				else:
-					char_1_data.append(ws.cell(idx_char_1, i).value)
-		for i in range(1, 15):
-			if i != 3:  # skip the planet of the character found at index 2
-				if i > 5:  # numbers so convert to float
-					char_2_data.append(float(ws.cell(idx_char_2, i).value))
-				else:
-					char_2_data.append(ws.cell(idx_char_2, i).value)
+					current_character_1_data = ws.cell(idx_char_1, i).value
+					current_character_2_data = ws.cell(idx_char_2, i).value
+
+					if current_character_1_data == '-' and current_character_2_data != '-':
+						current_character_1_data = current_character_2_data
+					elif current_character_2_data == '-' and current_character_1_data != '-':
+						current_character_2_data = current_character_1_data
+					elif current_character_2_data == '-' and current_character_1_data == '-':
+						current_character_1_data = current_character_2_data = '50'
+					char_1_data.append(current_character_1_data)
+					char_2_data.append(current_character_2_data)
 
 		player_one = Player(*char_1_data)
 		player_two = Player(*char_2_data)
@@ -230,5 +244,4 @@ class ExpectimaxHeuristic():
 		new_expheur = ExpectimaxHeuristic(new_game)
 		new_expheur.emulate()
 		return
-
 main()
