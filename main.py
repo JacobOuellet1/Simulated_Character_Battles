@@ -139,10 +139,10 @@ class Player():
 		print("Health:\t\t" + str(self.health) + "\n")
 	def strike(self, target, blocking):
 		self.blocking = blocking
-		damage = (self.strength * 0.33 + self.combat * 0.33 + self.power * 0.33) * (3 if self.blocking else 5) * 0.75
+		damage = (self.strength * 0.33 + self.combat * 0.33 + self.power * 0.33) * (3 if self.blocking else 5)
 		if target.blocking:
-			ratio = (0.8 * (self.speed * 0.66 + self.combat * 0.16 + self.intelligence * 0.16)) / (target.durability * 0.33 + target.speed * 0.33 + target.intelligence * 0.16 + target.strength * 0.16)
-			damage *= ratio
+			ratio = (0.5 * (self.speed * 0.66 + self.combat * 0.16 + self.intelligence * 0.16)) / (target.durability * 0.33 + target.speed * 0.33 + target.intelligence * 0.16 + target.strength * 0.16)
+			damage = min(damage, damage * ratio)
 		target.health = max(0, round(target.health - damage, 1)) # health will not drop below zero
 		
 
@@ -179,11 +179,11 @@ class Game():
 			self.offense.turn = 0 if self.turn else 1
 			self.defense.turn = 0 if self.turn else 1
 			if (self.turn == 0):
-				self.defense.p1.strike(self.offense.p2, 1)
-				self.offense.p1.strike(self.defense.p2, 0)
+				self.defense.p1.strike(self.offense.p2, True)
+				self.offense.p1.strike(self.defense.p2, False)
 			else:
-				self.defense.p2.strike(self.defense.p1, 1)
-				self.offense.p2.strike(self.offense.p1, 0)
+				self.defense.p2.strike(self.defense.p1, True)
+				self.offense.p2.strike(self.offense.p1, False)
 			self.offense.simulate(depth - 1)
 			self.defense.simulate(depth - 1)
 			
@@ -216,7 +216,7 @@ class ExpectimaxHeuristic():
 		active_player = self.p2 if self.game_state.turn else self.p1
 		new_game = None
 		attack_type = None
-		if (active_player.player_type):
+		if (active_player.player_type == 1):
 			if (off_ratio >= def_ratio):
 				new_game = self.game_state.offense
 				attack_type = " offensively."
